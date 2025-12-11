@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAFTAR IZIN SISWA/I - X.6</title>
+    
+    <style>
+        /* --- 1. Styling CSS --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f8ff; 
+            
+            /* Latar belakang Awan Estetik (Unsplash) */
+            background-image: url('https://images.unsplash.com/photo-1598460566417-802c6110f01a?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); 
+            
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 15px;
+            margin: 0;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* DIV KHUSUS UNTUK EFEK BLUR BACKGROUND SAJA */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: inherit; 
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            filter: blur(3px); /* Blur sedikit */
+            -webkit-filter: blur(3px);
+            z-index: -1;
+        }
+
+        /* Kontainer Utama untuk Konten (Memastikan Konten Jernih) */
+        #mainContainer {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* Gaya untuk Splash Screen */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(52, 58, 64, 0.9); 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.7s ease-out; 
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        /* Styling Teks Splash Screen (Font Estetik & Animasi) */
+        #splashText {
+            color: #ffffff; 
+            font-family: 'Georgia', serif; 
+            font-size: 3.5em;
+            font-weight: bold;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInOut 3s forwards, textShadowPulse 1.5s infinite alternate 1.5s; /* 3 detik */
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        
+        #splashText p {
+            font-size: 0.4em;
+            color: #007bff;
+            font-weight: normal;
+            margin: 0;
+            margin-top: 10px;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        @keyframes textShadowPulse {
+            from { text-shadow: 0 0 5px #007bff, 0 0 10px #007bff; }
+            to { text-shadow: 0 0 15px #007bff, 0 0 25px #007bff; }
+        }
+
+        /* --- Gaya Form & Laporan (Kotak Tampil Jernih) --- */
+        .container, .laporan-container {
+            background-color: rgba(255, 255, 255, 0.95); 
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            border-top: 5px solid #007bff;
+            margin-bottom: 20px;
+            box-sizing: border-box; 
+        }
+        
+        #mainContent {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in; 
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .laporan-container {
+            background-color: rgba(233, 236, 239, 0.98);
+            padding: 20px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        /* Styling untuk Iframe Jotform (Menggunakan link formulir Anda) */
+        #jotFormEmbed {
+            width: 100%; 
+            min-height: 800px; 
+            border: none;
+            overflow-y: auto; 
+        }
+
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            color: #343a40;
+            margin-top: 0;
+            border-bottom: 1px dashed #ced4da;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1em;
+            margin-top: 20px;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        
+        #btnLaporanModerator {
+            background-color: #007bff;
+        }
+
+        .note {
+            background-color: #f8d7da; 
+            color: #721c24;
+            padding: 10px;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border: 1px solid #bee5eb;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 0.85em;
+        }
+        
+        .sheets-embed-container {
+            width: 100%;
+            height: 400px; 
+            overflow: hidden;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .shaking {
+            animation: shake 0.4s;
+            background-color: #ffcccc !important;
+        }
+
+        @keyframes shake {
+            0%, 100% {transform: translateX(0);}
+            20%, 60% {transform: translateX(-10px);}
+            40%, 80% {transform: translateX(10px);}
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="splashScreen">
+        <div id="splashText">
+            WELCOME
+            <p>MURID TENN-FEARLESS6</p>
+        </div>
+    </div>
+    
+    <div id="mainContainer">
+        <div id="mainContent">
+            <div class="container" id="formContainer">
+                <h1>📝 DAFTAR IZIN SISWA/I - X.6</h1>
+                
+                <p class="note">
+                    **PERHATIAN PENTING !!!** <br>1. SISWA/I X.6 JANGAN BERBOHONG
+                    <br>2. IZIN DAN SAKIT TIDAK DI BUAT BUAT
+                    <br>3. KONFIRMASI ORANG TUA
+                </p>
+
+                <iframe 
+                    id="jotFormEmbed"
+                    src="https://form.jotform.com/253444158555058?noHeader=true&noFooter=true" 
+                    frameborder="0" 
+                    style="width: 100%; min-height: 800px; border: none;"
+                    allowfullscreen
+                    scrolling="yes" 
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+                </iframe>
+
+            </div>
+            
+            <div class="laporan-container">
+                <h2>📊 Data Laporan Real-Time</h2>
+                
+                <div class="alert-info">
+                    **SELURUH DATA YANG MASUK ADA DI DALAM DAN HANYA MODERATOR @CHEELLZZY YANG DAPAT MELIHAT**
+                </div>
+                
+                <button id="btnLaporanModerator">CLICK UNTUK MELIHAT DATA REAL-TIME (MODERATOR)</button>
+            </div>
+
+            <div class="container hidden" id="moderatorView" style="max-width: 800px; padding: 20px;">
+                <h2 style="color: #dc3545;">🔒 Akses Laporan Moderator</h2>
+                
+                <div id="moderatorContent" class="hidden">
+                    <h2 style="color: #007bff;">📋 DATA LAPORAN IZIN (GOOGLE SHEETS)</h2>
+                    
+                    <p class="alert-info" style="font-size: 0.85em;">
+                        Data di bawah ini disinkronkan otomatis dari Google Sheets Anda dan **selalu update**.
+                    </p>
+
+                    <div class="sheets-embed-container">
+                        <iframe 
+                            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTQQWkvd9TG64xZgEe01mQdS-4TSjSeffjCpi4C011uKCblxAZg4eXclND9EtQO8JGKpDHdbAFMKT/pubhtml?widget=true&headers=false" 
+                            width="100%" 
+                            height="100%" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <button onclick="document.getElementById('moderatorView').classList.add('hidden'); document.getElementById('mainContent').style.display='flex';" style="background-color: #6c757d; margin-top: 20px;">Tutup Laporan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnModerator = document.getElementById('btnLaporanModerator');
+            const moderatorView = document.getElementById('moderatorView');
+            const mainContent = document.getElementById('mainContent');
+            const splashScreen = document.getElementById('splashScreen');
+
+            // KODE MODERATOR
+            const MODERATOR_CODE = '25122008';
+            
+            // --- FUNGSI SPLASH SCREEN ---
+            function showMainContent() {
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                    mainContent.style.display = 'flex'; 
+                    setTimeout(() => {
+                        mainContent.style.opacity = '1';
+                    }, 10);
+                }, 700); 
+            }
+
+            // Jalankan splash screen selama 3 detik (durasi animasi)
+            setTimeout(showMainContent, 3000); 
+            
+            // --- FUNGSI LAPORAN MODERATOR (Hanya Mengecek Kode) ---
+            
+            btnModerator.addEventListener('click', function() {
+                const kode = prompt("Masukkan KODE MODERATOR:");
+                if (kode === null) return;
+                if (kode === MODERATOR_CODE) {
+                    mainContent.style.display = 'none';
+                    moderatorView.classList.remove('hidden');
+                    document.getElementById('moderatorContent').classList.remove('hidden');
+                } else {
+                    alert("❌ AKSES DITOLAK: Anda bukan Moderator!");
+                    document.body.classList.add('shaking');
+                    setTimeout(() => {
+                        document.body.classList.remove('shaking');
+                    }, 500);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
